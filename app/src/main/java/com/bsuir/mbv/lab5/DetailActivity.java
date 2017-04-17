@@ -12,6 +12,8 @@ import android.widget.TimePicker;
 
 import com.bsuir.mbv.lab5.model.AlarmDescription;
 
+import java.util.Calendar;
+
 public class DetailActivity extends AppCompatActivity {
 
     private Button selectRingtoneButton;
@@ -39,7 +41,10 @@ public class DetailActivity extends AppCompatActivity {
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, view.getCurrentHour());
+                calendar.set(Calendar.MINUTE, view.getCurrentMinute());
+                alarmDescription.setTime(calendar.getTimeInMillis());
             }
         });
     }

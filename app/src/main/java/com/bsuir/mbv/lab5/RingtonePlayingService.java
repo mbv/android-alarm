@@ -117,7 +117,7 @@ public class RingtonePlayingService extends Service {
                 Log.e("random number is " , String.valueOf(whale_number));
 
 
-                if (whale_number == 1) {
+               /* if (whale_number == 1) {
                     media_song = MediaPlayer.create(this, R.raw.humpback_bubblenet_and_vocals);
                     media_song.start();
                 }
@@ -174,11 +174,11 @@ public class RingtonePlayingService extends Service {
                 else {
                     media_song = MediaPlayer.create(this, R.raw.killerwhale_resident);
                     media_song.start();
-                }
+                }*/
 
 
             }
-            else if (whale_sound_choice == 1) {
+            /*else if (whale_sound_choice == 1) {
                 // create an instance of the media player
                 media_song = MediaPlayer.create(this, R.raw.humpback_bubblenet_and_vocals);
                 // start the ringtone
@@ -237,7 +237,7 @@ public class RingtonePlayingService extends Service {
             else {
                 media_song = MediaPlayer.create(this, R.raw.killerwhale_resident);
                 media_song.start();
-            }
+            }*/
 
 
 
