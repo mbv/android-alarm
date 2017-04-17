@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.SparseArray;
@@ -29,9 +30,13 @@ public class RingtonePlayingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 
-        AlarmDescription alarmDescription = intent.getParcelableExtra(Constants.alarmDescription);
+        int alarmDescriptionId = intent.getExtras().getInt(Constants.alarmDescriptionId);
+        String alarmDescriptionUri = intent.getExtras().getString(Constants.alarmDescriptionUri);
         boolean startPlaying = intent.getExtras().getBoolean(Constants.startPlaying);
-        if (alarmDescription != null) {
+        if (alarmDescriptionUri != null) {
+            AlarmDescription alarmDescription = new AlarmDescription();
+            alarmDescription.setId(alarmDescriptionId);
+            alarmDescription.setRingtone(Uri.parse(alarmDescriptionUri));
             if (alarmDescription.isDefaultRingtone()) {
                 return START_NOT_STICKY;
             }
@@ -66,11 +71,13 @@ public class RingtonePlayingService extends Service {
                     alarmService.setMediaPlayer(MediaPlayer.create(this, alarmService.getRingtone()));
                 }
                 alarmService.getMediaPlayer().start();
-                //notify_manager.notify(0, notification_popup);
+                alarmService.setPlaying(true);
+                //notify_manager.notify(alarmService.getId(), notification_popup);
 
             } else if (alarmService.isPlaying() && !startPlaying) {
                 alarmService.getMediaPlayer().stop();
                 alarmService.getMediaPlayer().reset();
+                alarmService.setPlaying(false);
             }
         }
 

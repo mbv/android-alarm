@@ -9,5 +9,7 @@ public class Constants {
     public final static int variableRequestCode = 1;
     public final static int ringtoneManagerRequestCode = 2;
     public final static String alarmDescription = "alarmDescription";
+    public final static String alarmDescriptionId = "alarmDescriptionId";
+    public final static String alarmDescriptionUri = "alarmDescriptionUri";
     public final static String startPlaying = "startPlaying";
 }

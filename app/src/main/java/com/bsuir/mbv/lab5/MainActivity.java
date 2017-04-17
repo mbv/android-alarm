@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,8 +19,6 @@ import android.view.View;
 
 import com.bsuir.mbv.lab5.model.Alarm;
 import com.bsuir.mbv.lab5.model.AlarmDescription;
-
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements DetailActivityCaller {
     AlarmList alarms = new AlarmList();
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
     public void openDetail(Alarm alarm) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(Constants.variableModelName, alarm.getAlarmDescription());
+        intent.putExtra(Constants.variableModelName, (Parcelable) alarm.getAlarmDescription());
         startActivityForResult(intent, Constants.variableRequestCode);
     }
 
@@ -98,24 +97,30 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
                 Alarm alarm = alarms.get(alarmDescription.getId());
 
-                /*Intent intentOld = new Intent(this, AlarmReceiver.class);
-                intentOld.putExtra(Constants.alarmDescription, alarm.getAlarmDescription());
-                intentOld.putExtra(Constants.startPlaying ,true);
+                Intent intentOld = new Intent(getApplicationContext(), AlarmReceiver.class);
+                intentOld.putExtra(Constants.alarmDescriptionId, alarm.getAlarmDescription().getId());
+                intentOld.putExtra(Constants.alarmDescriptionUri, alarm.getAlarmDescription().getRingtone().toString());
+                intentOld.putExtra(Constants.startPlaying, true);
 
-                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(MainActivity.this, alarmDescription.getId(),
+                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarm.getAlarmDescription().getId(),
                         intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
                         pendingIntentOld);
-                pendingIntentOld.cancel();*/
+                pendingIntentOld.cancel();
+
+                intentOld.putExtra(Constants.startPlaying, false);
+
+                sendBroadcast(intentOld);
 
                 alarm.setAlarmDescription(alarmDescription);
 
                 Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intent.putExtra(Constants.alarmDescription, alarm.getAlarmDescription());
+                intent.putExtra(Constants.alarmDescriptionId, alarm.getAlarmDescription().getId());
+                intent.putExtra(Constants.alarmDescriptionUri, alarm.getAlarmDescription().getRingtone().toString());
                 intent.putExtra(Constants.startPlaying, true);
 
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), UUID.randomUUID().hashCode(),
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getAlarmDescription().getId(),
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
