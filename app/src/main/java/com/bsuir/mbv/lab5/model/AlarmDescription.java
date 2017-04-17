@@ -1,12 +1,15 @@
 package com.bsuir.mbv.lab5.model;
 
+import android.content.Context;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Calendar;
+import java.util.Locale;
 
-public class AlarmDescription implements Parcelable{
+public class AlarmDescription implements Parcelable {
 
     private int id;
     private long time;
@@ -66,14 +69,25 @@ public class AlarmDescription implements Parcelable{
         return ringtone;
     }
 
+    public boolean isDefaultRingtone() {
+        return ringtone.toString().equals(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI);
+    }
+
     public void setRingtone(Uri ringtone) {
         this.ringtone = ringtone;
+    }
+
+    public String getRingtoneString(Context context) {
+        if (isDefaultRingtone()) {
+            return "None";
+        }
+        return RingtoneManager.getRingtone(context, ringtone).getTitle(context);
     }
 
     public String getTimeSting() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
 
-        return String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + " " +  String.valueOf(calendar.get(Calendar.MINUTE));
+        return String.format(Locale.getDefault(), "%1$02d:%2$02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
     }
 }

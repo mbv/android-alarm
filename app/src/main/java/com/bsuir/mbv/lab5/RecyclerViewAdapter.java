@@ -1,7 +1,6 @@
 package com.bsuir.mbv.lab5;
 
 import android.content.Context;
-import android.media.RingtoneManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Alarm alarm = _alarms.get(i);
 
         viewHolder.timeLabel.setText(alarm.getAlarmDescription().getTimeSting());
-        viewHolder.ringtoneLabel.setText(RingtoneManager.getRingtone(_context, alarm.getAlarmDescription().getRingtone()).getTitle(_context));
+        viewHolder.ringtoneLabel.setText(alarm.getAlarmDescription().getRingtoneString(_context));
         viewHolder.deleteButtonListener.setAlarm(alarm);
         viewHolder.viewItemListener.setAlarm(alarm);
     }

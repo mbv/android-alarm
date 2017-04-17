@@ -1,11 +1,12 @@
 package com.bsuir.mbv.lab5;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,10 +19,13 @@ import android.view.View;
 import com.bsuir.mbv.lab5.model.Alarm;
 import com.bsuir.mbv.lab5.model.AlarmDescription;
 
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity implements DetailActivityCaller {
     AlarmList alarms = new AlarmList();
     RecyclerView recyclerView;
     RecyclerViewAdapter adapter;
+    AlarmManager alarmManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +38,23 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Alarm alarm = new Alarm();
+
+                AlarmDescription alarmDescription = new AlarmDescription();
+                alarmDescription.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
+                alarmDescription.setTime(0);
+
+                alarm.setAlarmDescription(alarmDescription);
+
+                alarms.add(alarm);
+                adapter.notifyDataSetChanged();
             }
         });
 
 
         populateRecords(alarms);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         adapter = new RecyclerViewAdapter(alarms, this);
@@ -60,19 +74,14 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -86,7 +95,31 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
         if (requestCode == Constants.variableRequestCode) {
             if (resultCode == RESULT_OK) {
                 AlarmDescription alarmDescription = data.getParcelableExtra(Constants.variableModelName);
-                alarms.get(alarmDescription.getId()).setAlarmDescription(alarmDescription);
+
+                Alarm alarm = alarms.get(alarmDescription.getId());
+
+                /*Intent intentOld = new Intent(this, AlarmReceiver.class);
+                intentOld.putExtra(Constants.alarmDescription, alarm.getAlarmDescription());
+                intentOld.putExtra(Constants.startPlaying ,true);
+
+                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(MainActivity.this, alarmDescription.getId(),
+                        intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
+                        pendingIntentOld);
+                pendingIntentOld.cancel();*/
+
+                alarm.setAlarmDescription(alarmDescription);
+
+                Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                intent.putExtra(Constants.alarmDescription, alarm.getAlarmDescription());
+                intent.putExtra(Constants.startPlaying, true);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), UUID.randomUUID().hashCode(),
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
+                        pendingIntent);
                 adapter.notifyDataSetChanged();
             }
         }
@@ -102,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
             alarm.setAlarmDescription(alarmDescription);
 
-           //alarm.setIntent(new Intent(this, Alarm_Receiver.class));
+           //alarm.setIntent(new Intent(this, AlarmReceiver.class));
 
 
             alarms.add(alarm);

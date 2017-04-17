@@ -26,6 +26,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         selectRingtoneButton = (Button) findViewById(R.id.select_ringtone);
         timePicker = (TimePicker) findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -72,6 +73,10 @@ public class DetailActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         alarmDescription = getIntent().getParcelableExtra(Constants.variableModelName);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(alarmDescription.getTime());
+        timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+        timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
     }
 
     @Override

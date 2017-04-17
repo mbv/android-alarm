@@ -2,10 +2,12 @@ package com.bsuir.mbv.lab5;
 
 
 import android.media.MediaPlayer;
+import android.net.Uri;
 
 public class AlarmService {
     private int id;
     private MediaPlayer mediaPlayer;
+    private Uri ringtone;
     private boolean isPlaying;
 
     public int getId() {
@@ -30,5 +32,13 @@ public class AlarmService {
 
     public void setPlaying(boolean playing) {
         isPlaying = playing;
+    }
+
+    public Uri getRingtone() {
+        return ringtone;
+    }
+
+    public void setRingtone(Uri ringtone) {
+        this.ringtone = ringtone;
     }
 }
