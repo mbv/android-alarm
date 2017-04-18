@@ -1,4 +1,4 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.service;
 
 
 import android.media.MediaPlayer;

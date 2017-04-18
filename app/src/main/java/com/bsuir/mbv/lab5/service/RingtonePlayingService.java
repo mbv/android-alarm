@@ -1,4 +1,4 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.service;
 
 
 import android.annotation.TargetApi;
@@ -13,11 +13,14 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.SparseArray;
 
+import com.bsuir.mbv.lab5.Constants;
+import com.bsuir.mbv.lab5.R;
+import com.bsuir.mbv.lab5.activity.MainActivity;
 import com.bsuir.mbv.lab5.model.Alarm;
 
 
 public class RingtonePlayingService extends Service {
-    private SparseArray<AlarmService> _alarmServies = new SparseArray<>();
+    private SparseArray<AlarmService> _alarmServices = new SparseArray<>();
 
 
     @Override
@@ -38,13 +41,13 @@ public class RingtonePlayingService extends Service {
             if (alarm.isDefaultRingtone()) {
                 return START_NOT_STICKY;
             }
-            AlarmService alarmService = _alarmServies.get(alarm.getId());
+            AlarmService alarmService = _alarmServices.get(alarm.getId());
             if (alarmService == null) {
                 alarmService = new AlarmService();
                 alarmService.setId(alarm.getId());
                 alarmService.setRingtone(alarm.getRingtone());
                 alarmService.setPlaying(false);
-                _alarmServies.put(alarm.getId(), alarmService);
+                _alarmServices.put(alarm.getId(), alarmService);
             } else {
                 alarmService.setRingtone(alarm.getRingtone());
             }

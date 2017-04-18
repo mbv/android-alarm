@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bsuir.mbv.lab5.DetailActivity">
+    tools:context="com.bsuir.mbv.lab5.activity.DetailActivity">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -16,11 +16,18 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp">
 
-        <Button
-            android:id="@+id/select_ringtone"
+        <TextView
+            android:id="@+id/ringtoneTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Ringtone" />
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp" />
+
+        <Button
+            android:id="@+id/selectRingtoneButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_ringtone" />
 
         <Space
             android:layout_width="match_parent"

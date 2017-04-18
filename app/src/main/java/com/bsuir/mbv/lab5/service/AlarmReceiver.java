@@ -1,8 +1,10 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.bsuir.mbv.lab5.Constants;
 
 
 public class AlarmReceiver extends BroadcastReceiver {

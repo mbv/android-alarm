@@ -1,4 +1,4 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.activity.delegate;
 
 import com.bsuir.mbv.lab5.model.Alarm;
 

@@ -1,4 +1,4 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -16,13 +16,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.bsuir.mbv.lab5.activity.delegate.MainActivityDelegate;
+import com.bsuir.mbv.lab5.service.AlarmReceiver;
+import com.bsuir.mbv.lab5.Constants;
+import com.bsuir.mbv.lab5.R;
+import com.bsuir.mbv.lab5.activity.adapter.AlarmListViewAdapter;
 import com.bsuir.mbv.lab5.db.AlarmDAO;
 import com.bsuir.mbv.lab5.model.Alarm;
 
 public class MainActivity extends AppCompatActivity implements MainActivityDelegate {
     AlarmDAO alarmDAO;
     RecyclerView recyclerView;
-    RecyclerViewAdapter adapter;
+    AlarmListViewAdapter adapter;
     AlarmManager alarmManager;
 
     @Override
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new RecyclerViewAdapter(alarmDAO.getAll(), this);
+        adapter = new AlarmListViewAdapter(alarmDAO.getAll(), this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
 

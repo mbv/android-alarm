@@ -1,4 +1,4 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.activity;
 
 import android.content.Intent;
 import android.media.RingtoneManager;
@@ -9,8 +9,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bsuir.mbv.lab5.Constants;
+import com.bsuir.mbv.lab5.R;
 import com.bsuir.mbv.lab5.model.Alarm;
 
 import java.util.Calendar;
@@ -18,6 +21,7 @@ import java.util.Calendar;
 public class DetailActivity extends AppCompatActivity {
 
     private Button selectRingtoneButton;
+    private TextView ringtoneTextView;
     private TimePicker timePicker;
     private Alarm alarm;
 
@@ -25,7 +29,8 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        selectRingtoneButton = (Button) findViewById(R.id.select_ringtone);
+        selectRingtoneButton = (Button) findViewById(R.id.selectRingtoneButton);
+        ringtoneTextView = (TextView) findViewById(R.id.ringtoneTextView);
         timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
 
@@ -55,6 +60,8 @@ public class DetailActivity extends AppCompatActivity {
     void selectRingtone() {
         Intent tmpIntent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
 
+        tmpIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarm.getRingtone());
+
         startActivityForResult(tmpIntent, Constants.ringtoneManagerRequestCode);
     }
 
@@ -65,7 +72,8 @@ public class DetailActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                 if (uri != null) {
-                   alarm.setRingtone(uri);
+                    alarm.setRingtone(uri);
+                    ringtoneTextView.setText(alarm.getRingtoneString(this));
                 }
             }
         }
@@ -79,6 +87,7 @@ public class DetailActivity extends AppCompatActivity {
         calendar.setTimeInMillis(alarm.getTime());
         timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+        ringtoneTextView.setText(alarm.getRingtoneString(this));
     }
 
     @Override

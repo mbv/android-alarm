@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -18,9 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity" />
-        <receiver android:name=".AlarmReceiver" />
-        <service android:name=".RingtonePlayingService"
+        <activity android:name=".activity.DetailActivity" />
+        <receiver android:name=".service.AlarmReceiver" />
+        <service android:name=".service.RingtonePlayingService"
             android:enabled="true">
         </service>
     </application>

@@ -1,23 +1,25 @@
-package com.bsuir.mbv.lab5;
+package com.bsuir.mbv.lab5.activity.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bsuir.mbv.lab5.R;
+import com.bsuir.mbv.lab5.activity.delegate.MainActivityDelegate;
 import com.bsuir.mbv.lab5.model.Alarm;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class AlarmListViewAdapter extends RecyclerView.Adapter<AlarmListViewAdapter.ViewHolder> {
 
     private List<Alarm> _alarms;
     private Context _context;
 
-    public RecyclerViewAdapter(List<Alarm> alarmDescriptions, Context context) {
+    public AlarmListViewAdapter(List<Alarm> alarmDescriptions, Context context) {
         this._alarms = alarmDescriptions;
         this._context = context;
     }
@@ -52,7 +54,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private TextView timeLabel;
         private TextView ringtoneLabel;
-        private Button deleteButton;
+        private ImageButton deleteButton;
         private DeleteButtonListener deleteButtonListener;
         private ViewItemListener viewItemListener;
 
@@ -60,7 +62,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
             timeLabel = (TextView) itemView.findViewById(R.id.timeLabel);
             ringtoneLabel = (TextView) itemView.findViewById(R.id.ringtoneLabel);
-            deleteButton = (Button) itemView.findViewById(R.id.recyclerViewItemDeleteButton);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.recyclerViewItemDeleteButton);
             deleteButtonListener = new DeleteButtonListener();
             viewItemListener = new ViewItemListener();
             deleteButton.setOnClickListener(deleteButtonListener);

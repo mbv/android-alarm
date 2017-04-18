@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:textSize="20sp"
-        tools:text="name" />
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/timeLabel"
@@ -19,15 +21,18 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/recyclerViewItemDeleteButton"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
         android:textSize="20sp"
-        tools:text="name" />
+        tools:ignore="RelativeOverlap" />
 
-    <Button
+    <ImageButton
         android:id="@+id/recyclerViewItemDeleteButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="x" />
+        android:contentDescription="@string/delete"
+        android:src="@android:drawable/ic_menu_delete" />
 
 </RelativeLayout>
