@@ -3,7 +3,7 @@ package com.bsuir.mbv.lab5;
 import com.bsuir.mbv.lab5.model.Alarm;
 
 
-public interface DetailActivityCaller {
+public interface MainActivityDelegate {
     void openDetail(Alarm alarm);
     void deleteAlarm(Alarm alarm);
 }

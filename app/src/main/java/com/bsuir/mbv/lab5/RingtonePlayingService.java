@@ -28,10 +28,8 @@ public class RingtonePlayingService extends Service {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-
-        int alarmDescriptionId = intent.getExtras().getInt(Constants.alarmDescriptionId);
-        String alarmDescriptionUri = intent.getExtras().getString(Constants.alarmDescriptionUri);
+        int alarmDescriptionId = intent.getExtras().getInt(Constants.alarmModelId);
+        String alarmDescriptionUri = intent.getExtras().getString(Constants.alarmModelUri);
         boolean startPlaying = intent.getExtras().getBoolean(Constants.startPlaying);
         if (alarmDescriptionUri != null) {
             Alarm alarm = new Alarm();
@@ -47,21 +45,24 @@ public class RingtonePlayingService extends Service {
                 alarmService.setRingtone(alarm.getRingtone());
                 alarmService.setPlaying(false);
                 _alarmServies.put(alarm.getId(), alarmService);
+            } else {
+                alarmService.setRingtone(alarm.getRingtone());
             }
 
 
 
-            NotificationManager notify_manager = (NotificationManager)
+            NotificationManager notifyManager = (NotificationManager)
                     getSystemService(NOTIFICATION_SERVICE);
-            Intent intent_main_activity = new Intent(this.getApplicationContext(), MainActivity.class);
-            PendingIntent pending_intent_main_activity = PendingIntent.getActivity(this, 0,
-                    intent_main_activity, 0);
+            Intent intentMainActivity = new Intent(this.getApplicationContext(), MainActivity.class);
+            intentMainActivity.putExtra(Constants.alarmModelId, alarm.getId());
+            PendingIntent pendingIntentMainActivity = PendingIntent.getActivity(this, Constants.stopAlarmRequestCode,
+                    intentMainActivity, 0);
 
             Notification notification_popup = new Notification.Builder(this)
                     .setContentTitle("An alarm is going off!")
                     .setContentText("Click me!")
-                    .setSmallIcon(R.drawable.abc_btn_switch_to_on_mtrl_00001)
-                    .setContentIntent(pending_intent_main_activity)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(pendingIntentMainActivity)
                     .setAutoCancel(true)
                     .build();
 
@@ -70,14 +71,14 @@ public class RingtonePlayingService extends Service {
                 if (alarmService.getMediaPlayer() == null) {
                     alarmService.setMediaPlayer(MediaPlayer.create(this, alarmService.getRingtone()));
                 }
-                notify_manager.notify(alarmService.getId(), notification_popup);
+                notifyManager.notify(alarmService.getId(), notification_popup);
                 alarmService.getMediaPlayer().start();
                 alarmService.setPlaying(true);
 
 
             } else if (alarmService.isPlaying() && !startPlaying) {
                 alarmService.getMediaPlayer().stop();
-                alarmService.getMediaPlayer().reset();
+                alarmService.setMediaPlayer(null);
                 alarmService.setPlaying(false);
             }
         }

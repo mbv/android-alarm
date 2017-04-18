@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        alarm = getIntent().getParcelableExtra(Constants.variableModelName);
+        alarm = getIntent().getParcelableExtra(Constants.alarmModel);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(alarm.getTime());
         timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
@@ -90,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i = new Intent();
-        i.putExtra(Constants.variableModelName, (Parcelable) alarm);
+        i.putExtra(Constants.alarmModel, (Parcelable) alarm);
         setResult(RESULT_OK, i);
         finish();
     }

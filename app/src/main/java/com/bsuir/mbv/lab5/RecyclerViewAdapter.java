@@ -48,13 +48,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return _alarms.size();
     }
 
-
-    private void delete(Alarm alarm) {
-        int position = _alarms.indexOf(alarm);
-        _alarms.remove(position);
-        notifyItemRemoved(position);
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView timeLabel;
@@ -82,8 +75,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onClick(View v) {
             if (alarm != null) {
-                if (_context instanceof DetailActivityCaller) {
-                    ((DetailActivityCaller) _context).deleteAlarm(alarm);
+                if (_context instanceof MainActivityDelegate) {
+                    ((MainActivityDelegate) _context).deleteAlarm(alarm);
                 }
             }
         }
@@ -100,8 +93,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onClick(View v) {
             if (alarm != null) {
-                if (_context instanceof DetailActivityCaller) {
-                    ((DetailActivityCaller) _context).openDetail(alarm);
+                if (_context instanceof MainActivityDelegate) {
+                    ((MainActivityDelegate) _context).openDetail(alarm);
                 }
             }
         }

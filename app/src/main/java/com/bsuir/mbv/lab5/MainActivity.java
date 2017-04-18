@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,7 +19,7 @@ import android.view.View;
 import com.bsuir.mbv.lab5.db.AlarmDAO;
 import com.bsuir.mbv.lab5.model.Alarm;
 
-public class MainActivity extends AppCompatActivity implements DetailActivityCaller {
+public class MainActivity extends AppCompatActivity implements MainActivityDelegate {
     AlarmDAO alarmDAO;
     RecyclerView recyclerView;
     RecyclerViewAdapter adapter;
@@ -44,14 +43,12 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
                 alarm.setTime(0);
 
 
-                alarmDAO.save(alarm);
+                int id = alarmDAO.save(alarm);
                 adapter.updateData(alarmDAO.getAll());
-                //adapter.notifyDataSetChanged();
+                openDetail(alarmDAO.get(id));
             }
         });
 
-
-        //populateRecords(alarms);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
@@ -67,12 +64,12 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
     public void openDetail(Alarm alarm) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(Constants.variableModelName, (Parcelable) alarm);
-        startActivityForResult(intent, Constants.variableRequestCode);
+        intent.putExtra(Constants.alarmModel, alarm);
+        startActivityForResult(intent, Constants.detailViewRequestCode);
     }
 
-    @Override
     public void deleteAlarm(Alarm alarm) {
+        disableAlarm(alarm);
         alarmDAO.delete(alarm);
         adapter.updateData(alarmDAO.getAll());
     }
@@ -94,61 +91,69 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
         return super.onOptionsItemSelected(item);
     }
 
+    private void disableAlarm(Alarm alarm) {
+        if (alarm == null) {
+            return;
+        }
+        Intent intentOld = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intentOld.putExtra(Constants.alarmModelId, alarm.getId());
+        intentOld.putExtra(Constants.alarmModelUri, alarm.getRingtone().toString());
+        intentOld.putExtra(Constants.startPlaying, true);
+
+        PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
+                intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
+                pendingIntentOld);
+        pendingIntentOld.cancel();
+
+        intentOld.putExtra(Constants.startPlaying, false);
+
+        sendBroadcast(intentOld);
+    }
+
+    private void enableAlarm(Alarm alarm) {
+        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intent.putExtra(Constants.alarmModelId, alarm.getId());
+        intent.putExtra(Constants.alarmModelUri, alarm.getRingtone().toString());
+        intent.putExtra(Constants.startPlaying, true);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
+                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
+                pendingIntent);
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.variableRequestCode) {
-            if (resultCode == RESULT_OK) {
-                Alarm alarm = data.getParcelableExtra(Constants.variableModelName);
-
-                Alarm alarmOld = alarmDAO.get(alarm.getId());
-
-                Intent intentOld = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intentOld.putExtra(Constants.alarmDescriptionId, alarmOld.getId());
-                intentOld.putExtra(Constants.alarmDescriptionUri, alarmOld.getRingtone().toString());
-                intentOld.putExtra(Constants.startPlaying, true);
-
-                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarmOld.getId(),
-                        intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmOld.getTime(),
-                        pendingIntentOld);
-                pendingIntentOld.cancel();
-
-                intentOld.putExtra(Constants.startPlaying, false);
-
-                sendBroadcast(intentOld);
-
-                alarmDAO.update(alarm);
-
-                Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intent.putExtra(Constants.alarmDescriptionId, alarm.getId());
-                intent.putExtra(Constants.alarmDescriptionUri, alarm.getRingtone().toString());
-                intent.putExtra(Constants.startPlaying, true);
-
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
-                        pendingIntent);
-                adapter.notifyDataSetChanged();
-
-                adapter.updateData(alarmDAO.getAll());
-            }
+    protected void onStart() {
+        super.onStart();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey(Constants.alarmModelId)) {
+            int AlarmId = extras.getInt(Constants.alarmModelId);
+            Alarm alarm = alarmDAO.get(AlarmId);
+            disableAlarm(alarm);
         }
     }
 
-    private void populateRecords(AlarmList alarms) {
-        for (int i = 0; i < 20; i++) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == Constants.detailViewRequestCode) {
+                Alarm alarm = data.getParcelableExtra(Constants.alarmModel);
 
-            Alarm alarm = new Alarm();
-            alarm.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
-            alarm.setTime(0);
-
-           //alarm.setIntent(new Intent(this, AlarmReceiver.class));
+                Alarm alarmOld = alarmDAO.get(alarm.getId());
+                disableAlarm(alarmOld);
 
 
-            alarms.add(alarm);
+                alarmDAO.update(alarm);
+
+                enableAlarm(alarm);
+
+                adapter.updateData(alarmDAO.getAll());
+            }
         }
     }
 }

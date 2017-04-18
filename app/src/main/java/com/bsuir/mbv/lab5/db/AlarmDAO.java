@@ -34,13 +34,13 @@ public class AlarmDAO {
         database = dbHelper.getWritableDatabase();
     }
 
-    public long save(Alarm alarm) {
+    public int save(Alarm alarm) {
 
         ContentValues values = new ContentValues();
         values.put(DataBaseHelper.RINGTONE_URI_COLUMN, alarm.getRingtone().toString());
         values.put(DataBaseHelper.TIME_COLUMN, alarm.getTime());
 
-        return database
+        return (int) database
                 .insert(DataBaseHelper.ALARMS_TABLE, null, values);
     }
 
