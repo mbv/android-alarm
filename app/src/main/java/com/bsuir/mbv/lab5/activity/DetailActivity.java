@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -99,7 +98,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i = new Intent();
-        i.putExtra(Constants.alarmModel, (Parcelable) alarm);
+        i.putExtra(Constants.alarmModel, alarm);
         setResult(RESULT_OK, i);
         finish();
     }

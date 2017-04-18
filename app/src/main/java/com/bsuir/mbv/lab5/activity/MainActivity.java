@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
                 pendingIntent);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
