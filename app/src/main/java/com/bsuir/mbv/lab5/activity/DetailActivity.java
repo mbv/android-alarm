@@ -51,6 +51,9 @@ public class DetailActivity extends AppCompatActivity {
                 calendar.set(Calendar.HOUR_OF_DAY, view.getCurrentHour());
                 calendar.set(Calendar.MINUTE, view.getCurrentMinute());
                 calendar.set(Calendar.SECOND, 0);
+                if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                    calendar.add(Calendar.DAY_OF_YEAR, 1);
+                }
                 alarm.setTime(calendar.getTimeInMillis());
             }
         });

@@ -58,8 +58,7 @@ public class RingtonePlayingService extends Service {
                     getSystemService(NOTIFICATION_SERVICE);
             Intent intentMainActivity = new Intent(this.getApplicationContext(), MainActivity.class);
             intentMainActivity.putExtra(Constants.alarmModelId, alarm.getId());
-            intentMainActivity.putExtra(Constants.requstCode, Constants.stopAlarmRequestCode);
-            PendingIntent pendingIntentMainActivity = PendingIntent.getActivity(this, Constants.stopAlarmRequestCode,
+            PendingIntent pendingIntentMainActivity = PendingIntent.getActivity(this, Constants.stopAlarmRequestCode + alarm.getId(),
                     intentMainActivity, 0);
 
             Notification notification_popup = new Notification.Builder(this)
