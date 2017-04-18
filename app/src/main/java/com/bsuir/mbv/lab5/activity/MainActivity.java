@@ -12,17 +12,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.bsuir.mbv.lab5.activity.delegate.MainActivityDelegate;
-import com.bsuir.mbv.lab5.service.AlarmReceiver;
 import com.bsuir.mbv.lab5.Constants;
 import com.bsuir.mbv.lab5.R;
 import com.bsuir.mbv.lab5.activity.adapter.AlarmListViewAdapter;
+import com.bsuir.mbv.lab5.activity.delegate.MainActivityDelegate;
 import com.bsuir.mbv.lab5.db.AlarmDAO;
 import com.bsuir.mbv.lab5.model.Alarm;
+import com.bsuir.mbv.lab5.service.AlarmReceiver;
 
 public class MainActivity extends AppCompatActivity implements MainActivityDelegate {
     AlarmDAO alarmDAO;
@@ -77,23 +75,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
         disableAlarm(alarm);
         alarmDAO.delete(alarm);
         adapter.updateData(alarmDAO.getAll());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void disableAlarm(Alarm alarm) {
