@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
     }
 
     public void deleteAlarm(Alarm alarm) {
+        disablePlayingAlarm(alarm);
         disableAlarm(alarm);
         alarmDAO.delete(alarm);
         alarmListViewAdapter.updateData(alarmDAO.getAll());
