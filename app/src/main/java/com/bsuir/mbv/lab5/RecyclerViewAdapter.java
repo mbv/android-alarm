@@ -82,7 +82,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onClick(View v) {
             if (alarm != null) {
-                delete(alarm);
+                if (_context instanceof DetailActivityCaller) {
+                    ((DetailActivityCaller) _context).deleteAlarm(alarm);
+                }
             }
         }
 

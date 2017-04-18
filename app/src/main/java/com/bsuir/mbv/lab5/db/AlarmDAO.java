@@ -54,13 +54,13 @@ public class AlarmDAO {
                 new String[] { String.valueOf(alarm.getId()) });
     }
 
-    public int deleteDept(Alarm alarm) {
+    public int delete(Alarm alarm) {
         return database.delete(DataBaseHelper.ALARMS_TABLE,
                 WHERE_ID_EQUALS, new String[] { alarm.getId() + "" });
     }
 
     public List<Alarm> getAll() {
-        List<Alarm> alarmsList = new ArrayList<Alarm>();
+        List<Alarm> alarmsList = new ArrayList<>();
         try (Cursor cursor = database.query(DataBaseHelper.ALARMS_TABLE,
                 new String[]{DataBaseHelper.ID_COLUMN, DataBaseHelper.RINGTONE_URI_COLUMN,
                         DataBaseHelper.TIME_COLUMN}, null, null, null,

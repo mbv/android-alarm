@@ -72,6 +72,12 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
     }
 
     @Override
+    public void deleteAlarm(Alarm alarm) {
+        alarmDAO.delete(alarm);
+        adapter.updateData(alarmDAO.getAll());
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
