@@ -121,10 +121,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
     protected void onStart() {
         super.onStart();
         Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey(Constants.alarmModelId)) {
-            int AlarmId = extras.getInt(Constants.alarmModelId);
-            Alarm alarm = alarmDAO.get(AlarmId);
-            disablePlayingAlarm(alarm);
+        if (extras != null && extras.containsKey(Constants.requstCode) && extras.containsKey(Constants.alarmModelId)) {
+            if (extras.getInt(Constants.requstCode) == Constants.stopAlarmRequestCode) {
+                int AlarmId = extras.getInt(Constants.alarmModelId);
+                Alarm alarm = alarmDAO.get(AlarmId);
+                disablePlayingAlarm(alarm);
+            }
         }
     }
 

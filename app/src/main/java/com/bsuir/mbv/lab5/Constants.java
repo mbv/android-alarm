@@ -10,4 +10,5 @@ public class Constants {
     public final static String alarmModelId = "alarmModelId";
     public final static String alarmModelUri = "alarmModelUri";
     public final static String startPlaying = "startPlaying";
+    public final static String requstCode = "requstCode";
 }
