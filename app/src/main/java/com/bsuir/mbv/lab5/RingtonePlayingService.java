@@ -13,7 +13,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.SparseArray;
 
-import com.bsuir.mbv.lab5.model.AlarmDescription;
+import com.bsuir.mbv.lab5.model.Alarm;
 
 
 public class RingtonePlayingService extends Service {
@@ -34,19 +34,19 @@ public class RingtonePlayingService extends Service {
         String alarmDescriptionUri = intent.getExtras().getString(Constants.alarmDescriptionUri);
         boolean startPlaying = intent.getExtras().getBoolean(Constants.startPlaying);
         if (alarmDescriptionUri != null) {
-            AlarmDescription alarmDescription = new AlarmDescription();
-            alarmDescription.setId(alarmDescriptionId);
-            alarmDescription.setRingtone(Uri.parse(alarmDescriptionUri));
-            if (alarmDescription.isDefaultRingtone()) {
+            Alarm alarm = new Alarm();
+            alarm.setId(alarmDescriptionId);
+            alarm.setRingtone(Uri.parse(alarmDescriptionUri));
+            if (alarm.isDefaultRingtone()) {
                 return START_NOT_STICKY;
             }
-            AlarmService alarmService = _alarmServies.get(alarmDescription.getId());
+            AlarmService alarmService = _alarmServies.get(alarm.getId());
             if (alarmService == null) {
                 alarmService = new AlarmService();
-                alarmService.setId(alarmDescription.getId());
-                alarmService.setRingtone(alarmDescription.getRingtone());
+                alarmService.setId(alarm.getId());
+                alarmService.setRingtone(alarm.getRingtone());
                 alarmService.setPlaying(false);
-                _alarmServies.put(alarmDescription.getId(), alarmService);
+                _alarmServies.put(alarm.getId(), alarmService);
             }
 
 
@@ -60,7 +60,7 @@ public class RingtonePlayingService extends Service {
             Notification notification_popup = new Notification.Builder(this)
                     .setContentTitle("An alarm is going off!")
                     .setContentText("Click me!")
-                    // .setSmallIcon(R.drawable.ic_action_call)
+                    .setSmallIcon(R.drawable.abc_btn_switch_to_on_mtrl_00001)
                     .setContentIntent(pending_intent_main_activity)
                     .setAutoCancel(true)
                     .build();
@@ -70,9 +70,10 @@ public class RingtonePlayingService extends Service {
                 if (alarmService.getMediaPlayer() == null) {
                     alarmService.setMediaPlayer(MediaPlayer.create(this, alarmService.getRingtone()));
                 }
+                notify_manager.notify(alarmService.getId(), notification_popup);
                 alarmService.getMediaPlayer().start();
                 alarmService.setPlaying(true);
-                //notify_manager.notify(alarmService.getId(), notification_popup);
+
 
             } else if (alarmService.isPlaying() && !startPlaying) {
                 alarmService.getMediaPlayer().stop();

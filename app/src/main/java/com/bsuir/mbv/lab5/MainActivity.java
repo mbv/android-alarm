@@ -17,11 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.bsuir.mbv.lab5.db.AlarmDAO;
 import com.bsuir.mbv.lab5.model.Alarm;
-import com.bsuir.mbv.lab5.model.AlarmDescription;
 
 public class MainActivity extends AppCompatActivity implements DetailActivityCaller {
-    AlarmList alarms = new AlarmList();
+    AlarmDAO alarmDAO;
     RecyclerView recyclerView;
     RecyclerViewAdapter adapter;
     AlarmManager alarmManager;
@@ -33,30 +33,30 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        alarmDAO = new AlarmDAO(getApplicationContext());
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Alarm alarm = new Alarm();
+                alarm.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
+                alarm.setTime(0);
 
-                AlarmDescription alarmDescription = new AlarmDescription();
-                alarmDescription.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
-                alarmDescription.setTime(0);
 
-                alarm.setAlarmDescription(alarmDescription);
-
-                alarms.add(alarm);
-                adapter.notifyDataSetChanged();
+                alarmDAO.save(alarm);
+                adapter.updateData(alarmDAO.getAll());
+                //adapter.notifyDataSetChanged();
             }
         });
 
 
-        populateRecords(alarms);
+        //populateRecords(alarms);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new RecyclerViewAdapter(alarms, this);
+        adapter = new RecyclerViewAdapter(alarmDAO.getAll(), this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
     public void openDetail(Alarm alarm) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(Constants.variableModelName, (Parcelable) alarm.getAlarmDescription());
+        intent.putExtra(Constants.variableModelName, (Parcelable) alarm);
         startActivityForResult(intent, Constants.variableRequestCode);
     }
 
@@ -93,19 +93,19 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.variableRequestCode) {
             if (resultCode == RESULT_OK) {
-                AlarmDescription alarmDescription = data.getParcelableExtra(Constants.variableModelName);
+                Alarm alarm = data.getParcelableExtra(Constants.variableModelName);
 
-                Alarm alarm = alarms.get(alarmDescription.getId());
+                Alarm alarmOld = alarmDAO.get(alarm.getId());
 
                 Intent intentOld = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intentOld.putExtra(Constants.alarmDescriptionId, alarm.getAlarmDescription().getId());
-                intentOld.putExtra(Constants.alarmDescriptionUri, alarm.getAlarmDescription().getRingtone().toString());
+                intentOld.putExtra(Constants.alarmDescriptionId, alarmOld.getId());
+                intentOld.putExtra(Constants.alarmDescriptionUri, alarmOld.getRingtone().toString());
                 intentOld.putExtra(Constants.startPlaying, true);
 
-                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarm.getAlarmDescription().getId(),
+                PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarmOld.getId(),
                         intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmOld.getTime(),
                         pendingIntentOld);
                 pendingIntentOld.cancel();
 
@@ -113,32 +113,31 @@ public class MainActivity extends AppCompatActivity implements DetailActivityCal
 
                 sendBroadcast(intentOld);
 
-                alarm.setAlarmDescription(alarmDescription);
+                alarmDAO.update(alarm);
 
                 Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intent.putExtra(Constants.alarmDescriptionId, alarm.getAlarmDescription().getId());
-                intent.putExtra(Constants.alarmDescriptionUri, alarm.getAlarmDescription().getRingtone().toString());
+                intent.putExtra(Constants.alarmDescriptionId, alarm.getId());
+                intent.putExtra(Constants.alarmDescriptionUri, alarm.getRingtone().toString());
                 intent.putExtra(Constants.startPlaying, true);
 
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getAlarmDescription().getId(),
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
                         intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getAlarmDescription().getTime(),
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
                         pendingIntent);
                 adapter.notifyDataSetChanged();
+
+                adapter.updateData(alarmDAO.getAll());
             }
         }
     }
 
     private void populateRecords(AlarmList alarms) {
         for (int i = 0; i < 20; i++) {
+
             Alarm alarm = new Alarm();
-
-            AlarmDescription alarmDescription = new AlarmDescription();
-            alarmDescription.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
-            alarmDescription.setTime(0);
-
-            alarm.setAlarmDescription(alarmDescription);
+            alarm.setRingtone(Uri.parse(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI));
+            alarm.setTime(0);
 
            //alarm.setIntent(new Intent(this, AlarmReceiver.class));
 

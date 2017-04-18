@@ -10,13 +10,17 @@ public class AlarmList {
     private SparseArray<Alarm> _alarms = new SparseArray<>();
 
     public void add(Alarm alarm) {
-        alarm.getAlarmDescription().setId(currentId);
+        alarm.setId(currentId);
         _alarms.put(currentId, alarm);
         currentId++;
     }
 
     public Alarm get(int id) {
         return _alarms.get(id);
+    }
+
+    public void set(int id, Alarm alarm) {
+        _alarms.setValueAt(id, alarm);
     }
 
     public void remove(int id) {

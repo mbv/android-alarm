@@ -10,12 +10,14 @@ import android.widget.TextView;
 
 import com.bsuir.mbv.lab5.model.Alarm;
 
+import java.util.List;
+
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private AlarmList _alarms;
+    private List<Alarm> _alarms;
     private Context _context;
 
-    public RecyclerViewAdapter(AlarmList alarmDescriptions, Context context) {
+    public RecyclerViewAdapter(List<Alarm> alarmDescriptions, Context context) {
         this._alarms = alarmDescriptions;
         this._context = context;
     }
@@ -26,12 +28,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return new ViewHolder(v);
     }
 
+    public void updateData(List<Alarm> alarms) {
+        this._alarms = alarms;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         Alarm alarm = _alarms.get(i);
 
-        viewHolder.timeLabel.setText(alarm.getAlarmDescription().getTimeSting());
-        viewHolder.ringtoneLabel.setText(alarm.getAlarmDescription().getRingtoneString(_context));
+        viewHolder.timeLabel.setText(alarm.getTimeSting());
+        viewHolder.ringtoneLabel.setText(alarm.getRingtoneString(_context));
         viewHolder.deleteButtonListener.setAlarm(alarm);
         viewHolder.viewItemListener.setAlarm(alarm);
     }

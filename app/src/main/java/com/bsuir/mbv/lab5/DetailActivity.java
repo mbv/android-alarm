@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
 
-import com.bsuir.mbv.lab5.model.AlarmDescription;
+import com.bsuir.mbv.lab5.model.Alarm;
 
 import java.util.Calendar;
 
@@ -19,7 +19,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private Button selectRingtoneButton;
     private TimePicker timePicker;
-    private AlarmDescription alarmDescription;
+    private Alarm alarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,8 @@ public class DetailActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, view.getCurrentHour());
                 calendar.set(Calendar.MINUTE, view.getCurrentMinute());
-                alarmDescription.setTime(calendar.getTimeInMillis());
+                calendar.set(Calendar.SECOND, 0);
+                alarm.setTime(calendar.getTimeInMillis());
             }
         });
     }
@@ -64,7 +65,7 @@ public class DetailActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                 if (uri != null) {
-                   alarmDescription.setRingtone(uri);
+                   alarm.setRingtone(uri);
                 }
             }
         }
@@ -73,9 +74,9 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        alarmDescription = getIntent().getParcelableExtra(Constants.variableModelName);
+        alarm = getIntent().getParcelableExtra(Constants.variableModelName);
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(alarmDescription.getTime());
+        calendar.setTimeInMillis(alarm.getTime());
         timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
     }
@@ -89,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i = new Intent();
-        i.putExtra(Constants.variableModelName, (Parcelable)alarmDescription);
+        i.putExtra(Constants.variableModelName, (Parcelable) alarm);
         setResult(RESULT_OK, i);
         finish();
     }
