@@ -74,6 +74,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
         alarmListViewAdapter.updateData(alarmDAO.getAll());
     }
 
+    private void disablePlayingAlarm(Alarm alarm) {
+        if (alarm == null) {
+            return;
+        }
+        Intent intentOld = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intentOld.putExtra(Constants.alarmModelId, alarm.getId());
+        intentOld.putExtra(Constants.alarmModelUri, alarm.getRingtone().toString());
+        intentOld.putExtra(Constants.startPlaying, false);
+
+        sendBroadcast(intentOld);
+    }
+
+
     private void disableAlarm(Alarm alarm) {
         if (alarm == null) {
             return;
@@ -85,14 +98,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
         PendingIntent pendingIntentOld = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
                 intentOld, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
-                pendingIntentOld);
         pendingIntentOld.cancel();
 
-        intentOld.putExtra(Constants.startPlaying, false);
-
-        sendBroadcast(intentOld);
     }
 
     private void enableAlarm(Alarm alarm) {
@@ -103,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(),
                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime(),
                 pendingIntent);
@@ -115,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
         if (extras != null && extras.containsKey(Constants.alarmModelId)) {
             int AlarmId = extras.getInt(Constants.alarmModelId);
             Alarm alarm = alarmDAO.get(AlarmId);
-            disableAlarm(alarm);
+            disablePlayingAlarm(alarm);
         }
     }
 
@@ -127,7 +135,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
                 Alarm alarm = data.getParcelableExtra(Constants.alarmModel);
 
                 Alarm alarmOld = alarmDAO.get(alarm.getId());
-                disableAlarm(alarmOld);
+                if (alarm.getTime() != alarmOld.getTime()) {
+                    disableAlarm(alarmOld);
+                }
 
 
                 alarmDAO.update(alarm);
