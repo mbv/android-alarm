@@ -24,8 +24,7 @@ import com.bsuir.mbv.lab5.service.AlarmReceiver;
 
 public class MainActivity extends AppCompatActivity implements MainActivityDelegate {
     AlarmDAO alarmDAO;
-    RecyclerView recyclerView;
-    AlarmListViewAdapter adapter;
+    AlarmListViewAdapter alarmListViewAdapter;
     AlarmManager alarmManager;
 
     @Override
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
 
                 int id = alarmDAO.save(alarm);
-                adapter.updateData(alarmDAO.getAll());
+                alarmListViewAdapter.updateData(alarmDAO.getAll());
                 openDetail(alarmDAO.get(id));
             }
         });
@@ -55,14 +54,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        adapter = new AlarmListViewAdapter(alarmDAO.getAll(), this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        alarmListViewAdapter = new AlarmListViewAdapter(alarmDAO.getAll(), this);
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(itemAnimator);
+        recyclerView.setAdapter(alarmListViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     public void openDetail(Alarm alarm) {
@@ -74,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
     public void deleteAlarm(Alarm alarm) {
         disableAlarm(alarm);
         alarmDAO.delete(alarm);
-        adapter.updateData(alarmDAO.getAll());
+        alarmListViewAdapter.updateData(alarmDAO.getAll());
     }
 
     private void disableAlarm(Alarm alarm) {
@@ -137,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityDeleg
 
                 enableAlarm(alarm);
 
-                adapter.updateData(alarmDAO.getAll());
+                alarmListViewAdapter.updateData(alarmDAO.getAll());
             }
         }
     }
